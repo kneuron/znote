@@ -181,6 +181,7 @@ ax = guivalue(fig,'axes');
 delete(kids(ax));
 
 imagesc(F,T,spectro,'tag','spec','parent',ax);
+colormap hot
 xlabel('Time (ms)');ylabel('F (Hz)');
 axis xy, axis tight, box on;
 % update subsidiary plots
@@ -332,8 +333,10 @@ elseif strcmp(tag,'btn_lasso_feat')
      h_spec   = findobj(h_ax,'tag','spec');
      
      set(obj,'enable','off');
-     [IN, h_line] = lasso(h_spec);
+%      [IN, h_line] = lasso(h_spec); %can't find this anywhere
+     lso = imfreehand(); %this does the trick
      set(obj,'enable','on');
+     IN = lso.createMask;
      
      labels = guivalue(obj,'labels');
      isect  = ismember(labels.(labelset),selected) & IN;
@@ -341,7 +344,8 @@ elseif strcmp(tag,'btn_lasso_feat')
      labels.(labelset)(isect) = new_ind;
      guivalue(obj,'labels',labels);
      fprintf('Generated new feature %d\n', new_ind);
-     delete(h_line);
+     %delete(h_line);
+     delete(lso);
      
      update_featurelist(gcbf, labelset, new_ind);
      
